@@ -15,13 +15,14 @@ class GradientNetwork2:
         return self.similarity.embeddings[j] - self.similarity.embeddings[i]
 
     def d_target_similarity(self, i, j):
-        #todo slerp
+        #todo v3 - slerp instead
         return self.nodes[j] - self.nodes[i]
           
     def add_spokes(self, i):
         new_spokes = []
         for j in self.spokes.keys():
             direction = self.d_embedding(i, j)
+            #todo v3 - slerp denominator in gradient
             gradient = self.d_target_similarity(i, j)
             new_spokes.append((direction, gradient, j))
             self.spokes[j].append((-direction, -gradient, i))
@@ -38,9 +39,8 @@ class GradientNetwork2:
         sorted_spokes = [s for s in sorted(self.spokes[i], key=lambda item: item[1])]
         return sorted_spokes[-1]
 
-    def find_new_node(self, embedding):
+    def find_new_node_rank_pool(self, embedding):
         similarity_rank = np.flip(np.argsort(self.similarity.similarities(embedding)))
-        # todo collect a pool of nodes and find most common word
         pool_size = 10
         node_pool = []
         j = 0
@@ -48,12 +48,22 @@ class GradientNetwork2:
             while similarity_rank[j] in self.nodes:
                 j = j + 1
             node_pool.append(similarity_rank[j])
-        ranker = lambda n: self.similarity.vocab_words.index(self.similarity.word_string(n))
+        ranker = lambda n: self.similarity.word_index(self.similarity.word_string(n))
         rank_pool = [ranker(n) for n in node_pool]
         min_node_id = np.argmin(rank_pool)
         return node_pool[min_node_id]
 
-            
+    def find_new_node_single(self, embedding):
+        similarity_rank = np.flip(np.argsort(self.similarity.similarities(embedding)))
+        j = 0
+        while similarity_rank[j] in self.nodes:
+            j = j + 1
+        return similarity_rank[j]
+
+    def find_new_node(self, embedding):
+        return self.find_new_node_rank_pool(embedding)
+
+
 class GradientSolver2:
   
     def __init__(self, similarity, seeds=3, log=False):
@@ -72,13 +82,24 @@ class GradientSolver2:
         guess = self.similarity.random_guesses(1)[0]
         return guess
 
+    def seed_guess_schedule(self, i):
+        do_seed = False
+        if i < 100:
+            do_seed = i % 2 == 0
+        elif i < 200:
+            do_seed = i % 5 == 0
+        else:
+            do_seed = i % 20 == 0
+        return do_seed
+
     def semantic_leap(self, node_index, spoke, distance):
         return self.similarity.word_embedding(node_index) + spoke[0] * distance
 
     def directed_guess(self):
+        #todo v3 - top index and top spoke temperature
         node_basis = self.network.top_index
         spoke_basis = self.network.top_spoke(node_basis)
-        # todo - find best version
+        #todo v3 - parameter temperature or optimisation
         distance = np.random.rand(1) * 2
         embedding = self.semantic_leap(node_basis, spoke_basis, distance)
         guess = self.network.find_new_node(embedding)
@@ -88,6 +109,9 @@ class GradientSolver2:
         guess = None
         basis = (-1, (None, 0, -1))
         if len(self.network.nodes) < self.seeds or len(self.network.nodes) < 2:
+            guess = self.seed_guess()
+        elif self.seed_guess_schedule(len(self.network.nodes)):
+            #todo v4 - hybrid with cohorts
             guess = self.seed_guess()
         else:
             guess, basis = self.directed_guess()

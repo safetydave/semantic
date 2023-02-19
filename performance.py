@@ -8,17 +8,21 @@ def instantiate_and_solve(constructor, semantle):
     return steps
   
 
-def run_trial(nullary_constructor, semantle, n=10, target_pool=None, cartesian=False):
+def run_trial(nullary_constructor, semantle, n=10, target_pool=None, cartesian=False, tick=10):
     obs = []
+    targets = []
     for i in range(n):
-        targets = [semantle.target]
+        all_targets = [semantle.target]
         if target_pool is not None:
-            targets = [random.choice(target_pool)] if not cartesian else target_pool
-        for t in targets:
+            all_targets = [random.choice(target_pool)] if not cartesian else target_pool
+        for t in all_targets:
             semantle.target = t
             steps = instantiate_and_solve(nullary_constructor, semantle)
             obs.append(steps)
-    return obs
+            targets.append(t)
+        if tick is not None and i % tick == 0:
+            print('.', end='')
+    return obs, targets
   
   
 def run_sweep(unary_constructor, values, semantle, n=10, target_pool=None, cartesian=False):
