@@ -9,12 +9,17 @@ Solution components comprise:
 
 These are then combined in a variety of different notebooks:
 
+* Notebook for playing online
 * Notebooks exploring how each solver/search works
 * Notebook comparing solvers and human guesses
-* Notebook for playing online
 * Notebook for statistically testing performance
 
 And also use some utilities:
 
 * Semantle simulator to stand in for a remote game
 * Performance measurement utilities
+
+Resources (download to `data` folder):
+
+* english words (unigram freq) https://www.kaggle.com/datasets/rtatman/english-word-frequency
+* word2vec semantic model https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit?usp=sharing
