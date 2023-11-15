@@ -31,7 +31,7 @@ class VocabularyEWS:
 class VocabularyUF:
 
     def __init__(self):
-        unigram_freq_df = pd.read_csv('data/unigram_freq.csv').set_index('word')
+        unigram_freq_df = pd.read_csv('../data/unigram_freq.csv').set_index('word')
         self.words = list(unigram_freq_df.index[:BASE_VOCABULARY_SIZE])
         self.freqs = list(unigram_freq_df['count'][:BASE_VOCABULARY_SIZE])
 

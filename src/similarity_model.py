@@ -12,7 +12,7 @@ class SimilarityModelW2V:
         self.description = 'w2v'
         self.semantics = semantics
         if self.semantics is None:
-            model = "data/GoogleNews-vectors-negative300.bin"
+            model = "../data/GoogleNews-vectors-negative300.bin"
             self.semantics = KeyedVectors.load_word2vec_format(model, binary=True)
         self.vocab_words = [w for w in base_vocabulary.words if w in self.semantics]
         self.embeddings = np.array([self.semantics[w] for w in self.vocab_words])
