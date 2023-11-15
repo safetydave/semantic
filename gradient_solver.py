@@ -37,12 +37,12 @@ class GradientNetwork:
         sorted_spokes = [s for s in sorted(self.spokes[i], key=lambda item: item[1])]
         return sorted_spokes[-1]
 
-    def find_new_node(self, embedding):
+    def find_new_node(self, embedding, exclude):
         similarity_rank = np.flip(np.argsort(self.similarity.similarities(embedding)))
         j = 0
-        while similarity_rank[j] in self.nodes:
+        while similarity_rank[j] in self.nodes or similarity_rank[j] in exclude:
             j = j + 1
-        return similarity_rank[j]     
+        return similarity_rank[j]
 
             
 class GradientSolver:
@@ -52,6 +52,7 @@ class GradientSolver:
         self.network = GradientNetwork(similarity)
         self.seeds = seeds
         self.log = log
+        self.guesses = []
         if self.log: self.logging = {}
 
     def log_append(self, label, value):
@@ -71,7 +72,7 @@ class GradientSolver:
         spoke_basis = self.network.top_spoke(node_basis)
         distance = np.random.rand(1) * 2
         embedding = self.semantic_leap(node_basis, spoke_basis, distance)
-        guess = self.network.find_new_node(embedding)
+        guess = self.network.find_new_node(embedding, self.guesses)
         return guess, (node_basis, spoke_basis)
       
     def make_guess(self):
@@ -81,6 +82,7 @@ class GradientSolver:
             guess = self.seed_guess()
         else:
             guess, basis = self.directed_guess()
+        self.guesses.append(guess)
         if self.log: self.log_append('basis', basis)
         return guess
 
