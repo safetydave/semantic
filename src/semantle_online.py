@@ -1,17 +1,15 @@
-import random
-
-from cohort_bayes_solver import CohortBayesSolver
-from gradient_solver import GradientSolver
-import similarity_model as sm
-import vocabulary as voc
+import time
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
-import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+import similarity_model as sm
+import vocabulary as voc
+from gradient_solver import GradientSolver
 
 
 class SemantleOnline:

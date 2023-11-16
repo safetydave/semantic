@@ -1,9 +1,7 @@
-from gensim.models import KeyedVectors
 import numpy as np
-import numpy.ma as ma
-from numpy.linalg import norm
-import tensorflow as tf
 import tensorflow_hub as hub
+from gensim.models import KeyedVectors
+from numpy.linalg import norm
 
 
 class SimilarityModelW2V:
