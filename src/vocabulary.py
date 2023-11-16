@@ -17,13 +17,11 @@ class Vocabulary:
     def add(self, word):
         self.words.append(word)
 
-    def add_missing_words(self, words):
-        added = []
-        for w in words:
-            if w not in self.words:
-                self.add(w)
-                added.append(w)
-        return added
+    def add_missing_words(self, missing_words):
+        difference = set(missing_words) - set(self.words)
+        for d in difference:
+            self.add(d)
+        return difference
 
     def remove_nsfw_words(self):
         count = 0
@@ -49,5 +47,5 @@ class VocabularyUF(Vocabulary):
         self.freqs = list(unigram_freq_df['count'][:BASE_VOCABULARY_SIZE])
 
     def add(self, word):
-        Vocabulary.add(word)
+        Vocabulary.add(self, word)
         self.freqs.append(0)
