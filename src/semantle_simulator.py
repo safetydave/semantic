@@ -4,7 +4,7 @@ from gensim.models import KeyedVectors
 class SemantleSimulator:
 
     def __init__(self):
-        semantle_model_ref = "data/GoogleNews-vectors-negative300.bin"
+        semantle_model_ref = "../data/GoogleNews-vectors-negative300.bin"
         self.wv = KeyedVectors.load_word2vec_format(semantle_model_ref, binary=True)
         self.score_scaling = 100
         self.target = None
