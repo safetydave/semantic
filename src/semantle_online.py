@@ -1,6 +1,7 @@
 import time
 
 from selenium import webdriver
+from selenium.webdriver import Firefox, FirefoxOptions
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -23,13 +24,13 @@ class SemantleOnline:
 
     @staticmethod
     def init_driver():
-        driver = webdriver.Firefox()
+        opts = FirefoxOptions()
+        opts.add_argument("--width=1000")
+        opts.add_argument("--height=750")
+        driver = webdriver.Firefox(options=opts)
         driver.get("https://semantle.com")
         assert "Semantle" in driver.title
-        try:
-            SemantleOnline.try_auto_close_rules(driver)
-        except:
-            input('please close rules dialog and press enter to continue')
+        input('\nIf needed, please close the rules dialog. Press enter to continue.\n')
         return driver
 
     @staticmethod
@@ -100,8 +101,19 @@ class SemantleOnline:
         self.driver.quit()
 
 
+def print_logo():
+    f = open('../logo.txt', 'r')
+    file_contents = f.read()
+    print(file_contents)
+    f.close()
+
+
 if __name__ == '__main__':
+    print_logo()
+    print('Initialising solver and browser...\n')
     online = SemantleOnline()
+    input('Select a game variant if you wish. Press enter to begin solving.\n')
     g, s = online.solve()
     print(g[-1])
+    input('Game solved. Press enter to exit.\n')
     online.close()
